@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request) {
@@ -11,39 +11,43 @@ export async function POST(request) {
     const { question } = await request.json();
 
     // Input validation
-    if (!question || question.trim() === '') {
+    if (!question || question.trim() === "") {
       return NextResponse.json(
-        { error: 'Необходимо указать вопрос' },
+        { error: "Необходимо указать вопрос" },
         { status: 400 }
       );
     }
 
     // Create prompt for GPT with specific instructions for Women's Day greeting card
     const prompt = `
-      Мне нужно красивое, позитивное и радостное предсказание для женщины на Международный женский день.
-      Пользователь задал следующий вопрос о своём будущем:
+      I need a beautiful, positive, and joyful prediction for a woman on International Women's Day.
+      The user asked the following question about their future:
       "${question}"
       
-      Пожалуйста, предоставьте оптимистичный, вдохновляющий и поднимающий настроение ответ, который:
-      - Написан теплым, ободряющим тоном
-      - Содержит только положительные предсказания
-      - Включает вдохновляющие слова для женщин
-      - Оформлен как красивое поздравление на открытке
-      - Добавляет яркости и очарования, подходящего для Женского дня
-      - Составляет 3-5 абзацев
-      - Заканчивается теплым поздравлением с Международным женским днём
+      Please provide an optimistic, inspiring, and uplifting response that:
+      - Is written in a warm, encouraging tone
+      - Contains only positive predictions
+      - Includes inspiring words for women
+      - Is formatted like a beautiful greeting card
+      - Adds brightness and charm suitable for Women's Day
+      - Consists of 3-5 paragraphs
+      - Ends with a warm greeting for International Women's Day
       
-      Ответьте только текстом предсказания, без объяснений или вступлений.
+      Respond with only the text of the prediction, without explanations or introductions.
       
-      Ответ должен быть на русском языке.
+      The response should be in Russian.
     `;
 
     // Call OpenAI API
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: "Вы позитивный, проницательный предсказатель будущего, который всегда видит светлое будущее впереди." },
-        { role: "user", content: prompt }
+        {
+          role: "system",
+          content:
+            "You are a positive, insightful fortune teller who always sees a bright future ahead.",
+        },
+        { role: "user", content: prompt },
       ],
       max_tokens: 800,
       temperature: 0.7,
@@ -55,10 +59,10 @@ export async function POST(request) {
     // Return the prediction
     return NextResponse.json({ prediction });
   } catch (error) {
-    console.error('Error generating prediction:', error);
-    
+    console.error("Error generating prediction:", error);
+
     return NextResponse.json(
-      { error: 'Не удалось сгенерировать предсказание' },
+      { error: "Не удалось сгенерировать предсказание" },
       { status: 500 }
     );
   }
